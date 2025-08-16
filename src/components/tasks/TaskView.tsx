@@ -16,6 +16,7 @@ export interface Task {
 interface TaskViewProps {
   view: ViewType;
   projectId?: string | null;
+  compact?: boolean;
 }
 
 const sampleTasks: Task[] = [
@@ -55,7 +56,7 @@ const sampleTasks: Task[] = [
   },
 ];
 
-export const TaskView = ({ view, projectId }: TaskViewProps) => {
+export const TaskView = ({ view, projectId, compact = false }: TaskViewProps) => {
   const [tasks, setTasks] = useState<Task[]>(sampleTasks);
 
   const filterTasks = () => {
@@ -86,19 +87,27 @@ export const TaskView = ({ view, projectId }: TaskViewProps) => {
   const filteredTasks = filterTasks();
 
   return (
-    <div className="p-6">
-      <div className="max-w-4xl mx-auto space-y-4">
+    <div className={compact ? "p-3" : "p-6"}>
+      <div className={`max-w-4xl mx-auto space-y-${compact ? "2" : "4"}`}>
         {filteredTasks.length === 0 ? (
-          <EmptyState view={view} />
+          !compact && <EmptyState view={view} />
         ) : (
-          filteredTasks.map((task) => (
+          filteredTasks.slice(0, compact ? 4 : undefined).map((task) => (
             <TaskCard
               key={task.id}
               task={task}
               onToggleComplete={handleToggleComplete}
               onDelete={handleDeleteTask}
+              compact={compact}
             />
           ))
+        )}
+        {compact && filteredTasks.length > 4 && (
+          <div className="text-center pt-2">
+            <span className="text-sm text-muted-foreground">
+              +{filteredTasks.length - 4} more tasks
+            </span>
+          </div>
         )}
       </div>
     </div>

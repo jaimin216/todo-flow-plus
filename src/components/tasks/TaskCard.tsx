@@ -9,6 +9,7 @@ interface TaskCardProps {
   task: Task;
   onToggleComplete: (taskId: string) => void;
   onDelete: (taskId: string) => void;
+  compact?: boolean;
 }
 
 const priorityStyles = {
@@ -32,7 +33,7 @@ const priorityColors = {
   4: "bg-priority-4",
 };
 
-export const TaskCard = ({ task, onToggleComplete, onDelete }: TaskCardProps) => {
+export const TaskCard = ({ task, onToggleComplete, onDelete, compact = false }: TaskCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const formatDate = (dateString: string) => {

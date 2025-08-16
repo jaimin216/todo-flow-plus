@@ -2,7 +2,7 @@ import { Inbox, Calendar, CalendarDays, Calculator, Cloud, Plus, Palette } from 
 import { Button } from "@/components/ui/button";
 import { ViewType } from "./AppLayout";
 import { cn } from "@/lib/utils";
-import { ThemeSelector } from "@/components/ui/theme-selector";
+import { ProThemeSelector } from "@/components/ui/pro-theme-selector";
 
 interface SidebarProps {
   currentView: ViewType;
@@ -101,7 +101,7 @@ export const Sidebar = ({ currentView, onViewChange, onProjectSelect }: SidebarP
       </nav>
 
       <div className="p-4 border-t border-border">
-        <ThemeSelector />
+        <ProThemeSelector />
       </div>
     </aside>
   );
