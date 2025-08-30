@@ -27,70 +27,110 @@ interface WeatherData {
 const fetchWeatherByLocation = async (location: string): Promise<WeatherData> => {
   const API_KEY = '819c33cb4d965df4c80f030e974ca335';
   
-  // Geocoding to get coordinates
-  const geocodeResponse = await fetch(
-    `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(location)}&limit=1&appid=${API_KEY}`
-  );
-  const geocodeData = await geocodeResponse.json();
-  
-  if (geocodeData.length === 0) {
-    throw new Error('Location not found');
-  }
-  
-  const { lat, lon, name, country } = geocodeData[0];
-  
-  // Current weather
-  const currentResponse = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=imperial`
-  );
-  const currentData = await currentResponse.json();
-  
-  // 5-day forecast
-  const forecastResponse = await fetch(
-    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=imperial`
-  );
-  const forecastData = await forecastResponse.json();
-  
-  // Process forecast
-  const dailyForecasts = forecastData.list.reduce((acc: any[], item: any) => {
-    const date = new Date(item.dt * 1000);
-    const dayKey = date.toDateString();
+  try {
+    // Geocoding to get coordinates
+    const geocodeResponse = await fetch(
+      `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(location)}&limit=1&appid=${API_KEY}`
+    );
     
-    if (!acc.find(f => f.dayKey === dayKey)) {
-      const dayItems = forecastData.list.filter((i: any) => 
-        new Date(i.dt * 1000).toDateString() === dayKey
-      );
-      
-      const high = Math.max(...dayItems.map((i: any) => i.main.temp_max));
-      const low = Math.min(...dayItems.map((i: any) => i.main.temp_min));
-      
-      const dayNames = ['Today', 'Tomorrow', 'Wed', 'Thu', 'Fri'];
-      const dayIndex = acc.length;
-      
-      acc.push({
-        dayKey,
-        day: dayIndex < 5 ? dayNames[dayIndex] : date.toLocaleDateString('en', { weekday: 'short' }),
-        high: Math.round(high),
-        low: Math.round(low),
-        condition: dayItems[0].weather[0].main,
-        icon: dayItems[0].weather[0].icon
-      });
+    if (!geocodeResponse.ok) {
+      if (geocodeResponse.status === 401) {
+        throw new Error('Invalid API key. Please check your OpenWeather API key.');
+      }
+      throw new Error(`Geocoding error: ${geocodeResponse.status}`);
     }
     
-    return acc;
-  }, []).slice(0, 5);
-  
-  return {
-    location: `${name}, ${country}`,
-    current: {
-      temperature: Math.round(currentData.main.temp),
-      condition: currentData.weather[0].main,
-      icon: currentData.weather[0].icon,
-      humidity: currentData.main.humidity,
-      windSpeed: Math.round(currentData.wind.speed)
-    },
-    forecast: dailyForecasts
-  };
+    const geocodeData = await geocodeResponse.json();
+    
+    if (geocodeData.length === 0) {
+      throw new Error('Location not found');
+    }
+    
+    const { lat, lon, name, country } = geocodeData[0];
+    
+    // Current weather
+    const currentResponse = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=imperial`
+    );
+    
+    if (!currentResponse.ok) {
+      throw new Error(`Weather API error: ${currentResponse.status}`);
+    }
+    
+    const currentData = await currentResponse.json();
+    
+    // 5-day forecast
+    const forecastResponse = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=imperial`
+    );
+    
+    if (!forecastResponse.ok) {
+      throw new Error(`Forecast API error: ${forecastResponse.status}`);
+    }
+    
+    const forecastData = await forecastResponse.json();
+    
+    // Process forecast
+    const dailyForecasts = forecastData.list.reduce((acc: any[], item: any) => {
+      const date = new Date(item.dt * 1000);
+      const dayKey = date.toDateString();
+      
+      if (!acc.find(f => f.dayKey === dayKey)) {
+        const dayItems = forecastData.list.filter((i: any) => 
+          new Date(i.dt * 1000).toDateString() === dayKey
+        );
+        
+        const high = Math.max(...dayItems.map((i: any) => i.main.temp_max));
+        const low = Math.min(...dayItems.map((i: any) => i.main.temp_min));
+        
+        const dayNames = ['Today', 'Tomorrow', 'Wed', 'Thu', 'Fri'];
+        const dayIndex = acc.length;
+        
+        acc.push({
+          dayKey,
+          day: dayIndex < 5 ? dayNames[dayIndex] : date.toLocaleDateString('en', { weekday: 'short' }),
+          high: Math.round(high),
+          low: Math.round(low),
+          condition: dayItems[0].weather[0].main,
+          icon: dayItems[0].weather[0].icon
+        });
+      }
+      
+      return acc;
+    }, []).slice(0, 5);
+    
+    return {
+      location: `${name}, ${country}`,
+      current: {
+        temperature: Math.round(currentData.main.temp),
+        condition: currentData.weather[0].main,
+        icon: currentData.weather[0].icon,
+        humidity: currentData.main.humidity,
+        windSpeed: Math.round(currentData.wind.speed)
+      },
+      forecast: dailyForecasts
+    };
+  } catch (error) {
+    console.error('Weather API error:', error);
+    // Return fallback demo data
+    return {
+      location: `${location} (Demo)`,
+      current: {
+        temperature: 72,
+        condition: "Clear",
+        icon: "01d",
+        humidity: 65,
+        windSpeed: 8
+      },
+      forecast: [
+        { day: "Today", high: 75, low: 62, condition: "Clear", icon: "01d" },
+        { day: "Tomorrow", high: 78, low: 65, condition: "Clouds", icon: "02d" },
+        { day: "Wed", high: 71, low: 58, condition: "Rain", icon: "10d" },
+        { day: "Thu", high: 69, low: 55, condition: "Clouds", icon: "03d" },
+        { day: "Fri", high: 74, low: 61, condition: "Clear", icon: "01d" }
+      ]
+    };
+  }
 };
 
 const getWeatherIcon = (condition: string) => {
@@ -146,7 +186,11 @@ export const Weather = () => {
         setIsLoading(true);
         
         const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject);
+          navigator.geolocation.getCurrentPosition(
+            resolve,
+            () => reject(new Error('Location access denied')),
+            { timeout: 10000, maximumAge: 300000 }
+          );
         });
         
         const { latitude, longitude } = position.coords;
@@ -155,20 +199,40 @@ export const Weather = () => {
         const response = await fetch(
           `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=819c33cb4d965df4c80f030e974ca335`
         );
-        const locationData = await response.json();
         
-        if (locationData.length > 0) {
-          const weatherData = await fetchWeatherByLocation(locationData[0].name);
-          setWeather(weatherData);
+        if (response.ok) {
+          const locationData = await response.json();
+          if (locationData.length > 0) {
+            const weatherData = await fetchWeatherByLocation(locationData[0].name);
+            setWeather(weatherData);
+          }
         }
       } catch (err) {
-        console.log('Could not get current location, using default');
-        // Fallback to a default location
+        console.log('Could not get current location, using fallback');
+        // Fallback to demo data
         try {
           const weatherData = await fetchWeatherByLocation('New York');
           setWeather(weatherData);
         } catch (fallbackErr) {
-          setError('Unable to load weather data');
+          setError('Unable to load weather data. Showing demo instead.');
+          // Set demo data manually
+          setWeather({
+            location: "Demo City",
+            current: {
+              temperature: 72,
+              condition: "Clear",
+              icon: "01d",
+              humidity: 65,
+              windSpeed: 8
+            },
+            forecast: [
+              { day: "Today", high: 75, low: 62, condition: "Clear", icon: "01d" },
+              { day: "Tomorrow", high: 78, low: 65, condition: "Clouds", icon: "02d" },
+              { day: "Wed", high: 71, low: 58, condition: "Rain", icon: "10d" },
+              { day: "Thu", high: 69, low: 55, condition: "Clouds", icon: "03d" },
+              { day: "Fri", high: 74, low: 61, condition: "Clear", icon: "01d" }
+            ]
+          });
         }
       } finally {
         setIsLoading(false);
@@ -225,22 +289,76 @@ export const Weather = () => {
           <Card className="shadow-elegant">
             <CardContent className="flex items-center justify-center py-12">
               <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="flex flex-col items-center space-y-4"
+                className="flex flex-col items-center space-y-6"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
               >
-                <Loader2 className="h-8 w-8 text-primary" />
-                <p className="text-muted-foreground">Loading weather...</p>
+                <div className="relative">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Cloud className="h-12 w-12 text-primary" />
+                  </motion.div>
+                  <motion.div
+                    animate={{ 
+                      x: [0, 10, -10, 0],
+                      opacity: [0.4, 1, 0.4]
+                    }}
+                    transition={{ 
+                      duration: 2, 
+                      repeat: Infinity,
+                      delay: 0.5
+                    }}
+                    className="absolute -top-2 -right-2"
+                  >
+                    <Sun className="h-6 w-6 text-warning" />
+                  </motion.div>
+                  <motion.div
+                    animate={{ 
+                      y: [0, 8, 0],
+                      opacity: [0.3, 0.8, 0.3]
+                    }}
+                    transition={{ 
+                      duration: 1.5, 
+                      repeat: Infinity,
+                      delay: 1
+                    }}
+                    className="absolute -bottom-1 left-2"
+                  >
+                    <CloudRain className="h-4 w-4 text-primary" />
+                  </motion.div>
+                </div>
+                <motion.div
+                  className="text-center space-y-2"
+                  animate={{ opacity: [0.6, 1, 0.6] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <p className="text-muted-foreground">Fetching weather data...</p>
+                  <p className="text-xs text-muted-foreground/70">Getting your location</p>
+                </motion.div>
               </motion.div>
             </CardContent>
           </Card>
         )}
 
         {/* Error State */}
-        {error && (
-          <Card className="shadow-elegant border-destructive/50">
-            <CardContent className="flex items-center justify-center py-8">
-              <p className="text-destructive">{error}</p>
+        {error && !isLoading && (
+          <Card className="shadow-elegant border-warning/50 bg-warning/5">
+            <CardContent className="flex flex-col items-center justify-center py-8 space-y-4">
+              <motion.div
+                animate={{ rotate: [0, -10, 10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="p-3 rounded-full bg-warning/20"
+              >
+                <Cloud className="h-8 w-8 text-warning" />
+              </motion.div>
+              <div className="text-center space-y-2">
+                <p className="text-warning font-medium">Weather Service Notice</p>
+                <p className="text-muted-foreground text-sm">{error}</p>
+                <p className="text-xs text-muted-foreground">Displaying demo data for preview</p>
+              </div>
             </CardContent>
           </Card>
         )}
