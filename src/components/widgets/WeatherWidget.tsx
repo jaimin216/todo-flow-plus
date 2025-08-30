@@ -8,7 +8,8 @@ import {
   Thermometer,
   Wind,
   Droplets,
-  MapPin
+  MapPin,
+  Loader2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,39 +20,62 @@ interface WeatherData {
   condition: string;
   humidity: number;
   windSpeed: number;
+  icon: string;
   forecast: Array<{
     day: string;
     high: number;
     low: number;
     condition: string;
+    icon: string;
   }>;
 }
 
-const mockWeatherData: WeatherData = {
-  location: "New York, NY",
-  temperature: 72,
-  condition: "Partly Cloudy",
-  humidity: 65,
-  windSpeed: 8,
-  forecast: [
-    { day: "Today", high: 75, low: 62, condition: "Partly Cloudy" },
-    { day: "Tomorrow", high: 78, low: 65, condition: "Sunny" },
-    { day: "Wed", high: 71, low: 58, condition: "Rainy" },
-    { day: "Thu", high: 69, low: 55, condition: "Cloudy" },
-    { day: "Fri", high: 74, low: 61, condition: "Sunny" }
-  ]
-};
+interface OpenWeatherResponse {
+  name: string;
+  main: {
+    temp: number;
+    humidity: number;
+  };
+  weather: Array<{
+    main: string;
+    description: string;
+    icon: string;
+  }>;
+  wind: {
+    speed: number;
+  };
+}
+
+interface ForecastResponse {
+  list: Array<{
+    dt: number;
+    main: {
+      temp_max: number;
+      temp_min: number;
+    };
+    weather: Array<{
+      main: string;
+      description: string;
+      icon: string;
+    }>;
+  }>;
+}
 
 const getWeatherIcon = (condition: string) => {
   switch (condition.toLowerCase()) {
+    case 'clear':
     case 'sunny':
       return Sun;
-    case 'rainy':
+    case 'rain':
+    case 'drizzle':
+    case 'thunderstorm':
       return CloudRain;
-    case 'snowy':
+    case 'snow':
       return CloudSnow;
-    case 'cloudy':
-    case 'partly cloudy':
+    case 'clouds':
+    case 'mist':
+    case 'fog':
+    case 'haze':
     default:
       return Cloud;
   }
@@ -59,21 +83,137 @@ const getWeatherIcon = (condition: string) => {
 
 const getWeatherColor = (condition: string) => {
   switch (condition.toLowerCase()) {
+    case 'clear':
     case 'sunny':
       return 'text-warning';
-    case 'rainy':
+    case 'rain':
+    case 'drizzle':
+    case 'thunderstorm':
       return 'text-primary';
-    case 'snowy':
+    case 'snow':
       return 'text-muted-foreground';
-    case 'cloudy':
-    case 'partly cloudy':
+    case 'clouds':
+    case 'mist':
+    case 'fog':
+    case 'haze':
     default:
       return 'text-accent-foreground';
   }
 };
 
+const fetchWeatherData = async (): Promise<WeatherData> => {
+  const API_KEY = '819c33cb4d965df4c80f030e974ca335';
+  
+  // Get user's location
+  const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+  
+  const { latitude, longitude } = position.coords;
+  
+  // Fetch current weather
+  const currentResponse = await fetch(
+    `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=imperial`
+  );
+  const currentData: OpenWeatherResponse = await currentResponse.json();
+  
+  // Fetch 5-day forecast
+  const forecastResponse = await fetch(
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=imperial`
+  );
+  const forecastData: ForecastResponse = await forecastResponse.json();
+  
+  // Process forecast data (get daily highs/lows)
+  const dailyForecasts = forecastData.list.reduce((acc: any[], item) => {
+    const date = new Date(item.dt * 1000);
+    const dayKey = date.toDateString();
+    
+    if (!acc.find(f => f.dayKey === dayKey)) {
+      const dayItems = forecastData.list.filter(i => 
+        new Date(i.dt * 1000).toDateString() === dayKey
+      );
+      
+      const high = Math.max(...dayItems.map(i => i.main.temp_max));
+      const low = Math.min(...dayItems.map(i => i.main.temp_min));
+      
+      const dayNames = ['Today', 'Tomorrow', 'Wed', 'Thu', 'Fri'];
+      const dayIndex = acc.length;
+      
+      acc.push({
+        dayKey,
+        day: dayIndex < 5 ? dayNames[dayIndex] : date.toLocaleDateString('en', { weekday: 'short' }),
+        high: Math.round(high),
+        low: Math.round(low),
+        condition: dayItems[0].weather[0].main,
+        icon: dayItems[0].weather[0].icon
+      });
+    }
+    
+    return acc;
+  }, []).slice(0, 5);
+  
+  return {
+    location: currentData.name,
+    temperature: Math.round(currentData.main.temp),
+    condition: currentData.weather[0].main,
+    humidity: currentData.main.humidity,
+    windSpeed: Math.round(currentData.wind.speed),
+    icon: currentData.weather[0].icon,
+    forecast: dailyForecasts
+  };
+};
+
 export const WeatherWidget = () => {
-  const [weather, setWeather] = useState<WeatherData>(mockWeatherData);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const loadWeather = async () => {
+      try {
+        setLoading(true);
+        const weatherData = await fetchWeatherData();
+        setWeather(weatherData);
+        setError(null);
+      } catch (err) {
+        setError('Unable to load weather data');
+        console.error('Weather fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadWeather();
+    
+    // Refresh every 10 minutes
+    const interval = setInterval(loadWeather, 10 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+  
+  if (loading) {
+    return (
+      <Card className="widget-card">
+        <CardContent className="flex items-center justify-center py-8">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          >
+            <Loader2 className="h-8 w-8 text-primary" />
+          </motion.div>
+        </CardContent>
+      </Card>
+    );
+  }
+  
+  if (error || !weather) {
+    return (
+      <Card className="widget-card">
+        <CardContent className="flex items-center justify-center py-8">
+          <p className="text-muted-foreground text-sm">{error || 'No weather data'}</p>
+        </CardContent>
+      </Card>
+    );
+  }
   
   const WeatherIcon = getWeatherIcon(weather.condition);
   const weatherColor = getWeatherColor(weather.condition);
@@ -110,8 +250,16 @@ export const WeatherWidget = () => {
           </div>
           
           <motion.div
-            animate={{ rotate: [0, 5, -5, 0] }}
-            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            animate={{ 
+              rotate: weather.condition.toLowerCase() === 'clear' ? [0, 360] : [0, 5, -5, 0],
+              scale: [1, 1.1, 1]
+            }}
+            transition={{ 
+              duration: weather.condition.toLowerCase() === 'clear' ? 20 : 2,
+              repeat: Infinity,
+              repeatDelay: weather.condition.toLowerCase() === 'clear' ? 0 : 3,
+              ease: weather.condition.toLowerCase() === 'clear' ? "linear" : "easeInOut"
+            }}
             className={`p-3 rounded-full bg-accent/20`}
           >
             <WeatherIcon className={`h-8 w-8 ${weatherColor}`} />
@@ -143,19 +291,38 @@ export const WeatherWidget = () => {
               return (
                 <motion.div
                   key={day.day}
-                  className="flex items-center justify-between py-1"
+                  className="flex items-center justify-between py-1 hover:bg-accent/10 rounded-md px-2 -mx-2 transition-colors"
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
+                  whileHover={{ scale: 1.02, x: 5 }}
                 >
                   <div className="flex items-center space-x-3">
-                    <DayIcon className={`h-4 w-4 ${dayColor}`} />
+                    <motion.div
+                      animate={{ 
+                        y: day.condition.toLowerCase().includes('rain') ? [0, -2, 0] : 0,
+                        rotate: day.condition.toLowerCase() === 'clear' ? [0, 10, -10, 0] : 0
+                      }}
+                      transition={{ 
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatDelay: 1
+                      }}
+                    >
+                      <DayIcon className={`h-4 w-4 ${dayColor}`} />
+                    </motion.div>
                     <span className="text-sm font-medium min-w-[60px]">
                       {day.day}
                     </span>
                   </div>
                   <div className="flex items-center space-x-2 text-sm">
-                    <span className="font-medium">{day.high}°</span>
+                    <motion.span 
+                      className="font-medium"
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{ duration: 1, repeat: Infinity, repeatDelay: 2 }}
+                    >
+                      {day.high}°
+                    </motion.span>
                     <span className="text-muted-foreground">{day.low}°</span>
                   </div>
                 </motion.div>
