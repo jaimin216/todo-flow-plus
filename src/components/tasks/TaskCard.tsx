@@ -1,9 +1,16 @@
 import { useState } from "react";
-import { Calendar, Trash2, CheckCircle, Circle } from "lucide-react";
+import { Calendar, Trash2, CheckCircle, Circle, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Task } from "./TaskView";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import {
+  CSS,
+} from '@dnd-kit/utilities';
 
 interface TaskCardProps {
   task: Task;
@@ -35,6 +42,15 @@ const priorityColors = {
 
 export const TaskCard = ({ task, onToggleComplete, onDelete, compact = false }: TaskCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id });
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -51,18 +67,37 @@ export const TaskCard = ({ task, onToggleComplete, onDelete, compact = false }: 
     }
   };
 
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   return (
-    <div
+    <motion.div
+      ref={setNodeRef}
+      style={style}
       className={cn(
-        "bg-card border border-border rounded-lg p-4 shadow-card hover:shadow-elegant transition-smooth border-l-4",
+        "bg-card border border-border rounded-lg p-4 shadow-card hover:shadow-elegant transition-smooth border-l-4 sortable-item group",
         priorityStyles[task.priority],
-        task.completed && "opacity-60"
+        task.completed && "opacity-60",
+        isDragging && "dragging shadow-glow z-50"
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-start space-x-3 flex-1">
+          {!compact && (
+            <div 
+              {...attributes} 
+              {...listeners}
+              className="mt-1 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <GripVertical className="h-4 w-4 text-muted-foreground" />
+            </div>
+          )}
           <Button
             variant="ghost"
             size="sm"
@@ -119,6 +154,6 @@ export const TaskCard = ({ task, onToggleComplete, onDelete, compact = false }: 
           </Button>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };

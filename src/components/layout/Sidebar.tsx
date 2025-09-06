@@ -1,4 +1,4 @@
-import { Inbox, Calendar, CalendarDays, Calculator, Cloud, Plus, Palette } from "lucide-react";
+import { Home, Inbox, Calendar, CalendarDays, Calculator, Cloud, Plus, Palette, Target, DollarSign, Brain, Trophy, StickyNote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewType } from "./AppLayout";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ interface SidebarProps {
 }
 
 const navigationItems = [
+  { id: 'dashboard' as ViewType, label: 'Dashboard', icon: Home },
   { id: 'inbox' as ViewType, label: 'Inbox', icon: Inbox },
   { id: 'today' as ViewType, label: 'Today', icon: Calendar },
   { id: 'upcoming' as ViewType, label: 'Upcoming', icon: CalendarDays },
@@ -19,6 +20,11 @@ const navigationItems = [
 const widgetItems = [
   { id: 'calculator' as ViewType, label: 'Calculator', icon: Calculator },
   { id: 'weather' as ViewType, label: 'Weather', icon: Cloud },
+  { id: 'habits' as ViewType, label: 'Habits', icon: Target },
+  { id: 'finance' as ViewType, label: 'Finance', icon: DollarSign },
+  { id: 'focus' as ViewType, label: 'Focus', icon: Brain },
+  { id: 'achievements' as ViewType, label: 'Achievements', icon: Trophy },
+  { id: 'notes' as ViewType, label: 'Notes', icon: StickyNote },
 ];
 
 export const Sidebar = ({ currentView, onViewChange, onProjectSelect }: SidebarProps) => {
@@ -62,20 +68,29 @@ export const Sidebar = ({ currentView, onViewChange, onProjectSelect }: SidebarP
             </Button>
           </div>
           <div className="space-y-1">
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-muted-foreground"
-            >
-              <div className="w-3 h-3 rounded-full bg-priority-2 mr-3" />
-              Work
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-muted-foreground"
-            >
-              <div className="w-3 h-3 rounded-full bg-priority-3 mr-3" />
-              Personal
-            </Button>
+            {['work', 'personal', 'health', 'learning'].map((project) => (
+              <Button
+                key={project}
+                variant={currentView === 'project' ? "secondary" : "ghost"}
+                className={cn(
+                  "w-full justify-start transition-smooth capitalize",
+                  currentView === 'project' && "bg-primary/10 text-primary font-medium"
+                )}
+                onClick={() => {
+                  onViewChange('project');
+                  onProjectSelect(project);
+                }}
+              >
+                <div className={cn(
+                  "w-3 h-3 rounded-full mr-3",
+                  project === 'work' && "bg-priority-2",
+                  project === 'personal' && "bg-priority-3", 
+                  project === 'health' && "bg-success",
+                  project === 'learning' && "bg-priority-1"
+                )} />
+                {project}
+              </Button>
+            ))}
           </div>
         </div>
 

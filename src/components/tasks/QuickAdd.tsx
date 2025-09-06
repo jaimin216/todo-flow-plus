@@ -16,24 +16,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Task } from "./TaskView";
 
-export const QuickAdd = () => {
+interface QuickAddProps {
+  onAddTask: (task: Omit<Task, 'id' | 'createdAt'>) => void;
+}
+
+export const QuickAdd = ({ onAddTask }: QuickAddProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [task, setTask] = useState("");
   const [priority, setPriority] = useState<string>("4");
   const [dueDate, setDueDate] = useState("");
+  const [project, setProject] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!task.trim()) return;
     
-    // Here we would normally add the task to our state/storage
-    console.log("Adding task:", { task, priority, dueDate });
+    onAddTask({
+      title: task,
+      completed: false,
+      priority: parseInt(priority) as 1 | 2 | 3 | 4,
+      dueDate: dueDate || undefined,
+      project: project || undefined,
+    });
     
     // Reset form
     setTask("");
     setPriority("4");
     setDueDate("");
+    setProject("");
     setIsOpen(false);
   };
 
@@ -150,6 +162,22 @@ export const QuickAdd = () => {
                 onChange={(e) => setDueDate(e.target.value)}
               />
             </div>
+          </div>
+          
+          <div>
+            <label className="text-sm font-medium mb-2 block">Project (optional)</label>
+            <Select value={project} onValueChange={setProject}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select project" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">No project</SelectItem>
+                <SelectItem value="work">Work</SelectItem>
+                <SelectItem value="personal">Personal</SelectItem>
+                <SelectItem value="health">Health</SelectItem>
+                <SelectItem value="learning">Learning</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           
           <div className="flex justify-end space-x-2">
