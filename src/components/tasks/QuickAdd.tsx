@@ -27,7 +27,7 @@ export const QuickAdd = ({ onAddTask }: QuickAddProps) => {
   const [task, setTask] = useState("");
   const [priority, setPriority] = useState<string>("4");
   const [dueDate, setDueDate] = useState("");
-  const [project, setProject] = useState("");
+  const [project, setProject] = useState("none");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,14 +38,14 @@ export const QuickAdd = ({ onAddTask }: QuickAddProps) => {
       completed: false,
       priority: parseInt(priority) as 1 | 2 | 3 | 4,
       dueDate: dueDate || undefined,
-      project: project || undefined,
+      project: project === "none" ? undefined : project,
     });
     
     // Reset form
     setTask("");
     setPriority("4");
     setDueDate("");
-    setProject("");
+    setProject("none");
     setIsOpen(false);
   };
 
@@ -171,7 +171,7 @@ export const QuickAdd = ({ onAddTask }: QuickAddProps) => {
                 <SelectValue placeholder="Select project" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No project</SelectItem>
+                <SelectItem value="none">No project</SelectItem>
                 <SelectItem value="work">Work</SelectItem>
                 <SelectItem value="personal">Personal</SelectItem>
                 <SelectItem value="health">Health</SelectItem>
