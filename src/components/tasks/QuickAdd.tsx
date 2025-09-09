@@ -17,6 +17,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Task } from "./TaskView";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface QuickAddProps {
   onAddTask: (task: Omit<Task, 'id' | 'createdAt'>) => void;
@@ -91,13 +93,27 @@ export const QuickAdd = ({ onAddTask }: QuickAddProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-gradient-primary hover:shadow-glow transition-spring">
-          <Plus className="mr-2 h-4 w-4" />
-          Add Task
-        </Button>
-      </DialogTrigger>
+    <>
+      {/* Floating Action Button */}
+      <motion.div
+        className="floating-action-btn"
+        whileHover={{ scale: 1.1, rotate: 90 }}
+        whileTap={{ scale: 0.9 }}
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 20 }}
+        onClick={() => setIsOpen(true)}
+      >
+        <Plus className="h-6 w-6" />
+      </motion.div>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>
+          <Button className="bg-gradient-primary hover:shadow-glow transition-spring">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Task
+          </Button>
+        </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add New Task</DialogTitle>
@@ -191,5 +207,6 @@ export const QuickAdd = ({ onAddTask }: QuickAddProps) => {
         </form>
       </DialogContent>
     </Dialog>
+    </>
   );
 };

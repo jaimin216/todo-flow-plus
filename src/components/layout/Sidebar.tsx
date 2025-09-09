@@ -53,7 +53,7 @@ export const Sidebar = ({ currentView, onViewChange, onProjectSelect }: SidebarP
                   onProjectSelect(null);
                 }}
               >
-                <item.icon className="mr-3 h-4 w-4" />
+                <item.icon className="mr-3 h-4 w-4 sidebar-icon-hover" />
                 {item.label}
               </Button>
             ))}
@@ -107,7 +107,7 @@ export const Sidebar = ({ currentView, onViewChange, onProjectSelect }: SidebarP
                 )}
                 onClick={() => onViewChange(item.id)}
               >
-                <item.icon className="mr-3 h-4 w-4" />
+                <item.icon className="mr-3 h-4 w-4 sidebar-icon-hover" />
                 {item.label}
               </Button>
             ))}

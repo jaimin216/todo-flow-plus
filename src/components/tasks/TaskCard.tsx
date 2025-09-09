@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Calendar, Trash2, CheckCircle, Circle, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Task } from "./TaskView";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -79,8 +80,8 @@ export const TaskCard = ({ task, onToggleComplete, onDelete, compact = false }: 
       className={cn(
         "bg-card border border-border rounded-lg p-4 shadow-card hover:shadow-elegant transition-smooth border-l-4 sortable-item group",
         priorityStyles[task.priority],
-        task.completed && "opacity-60",
-        isDragging && "dragging shadow-glow z-50"
+        task.completed && "opacity-60 bg-success/5",
+        isDragging && "dragging shadow-glow z-50 rotate-2"
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -98,23 +99,16 @@ export const TaskCard = ({ task, onToggleComplete, onDelete, compact = false }: 
               <GripVertical className="h-4 w-4 text-muted-foreground" />
             </div>
           )}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="p-0 h-auto hover:bg-transparent"
-            onClick={() => onToggleComplete(task.id)}
-          >
-            {task.completed ? (
-              <CheckCircle className="h-5 w-5 text-success" />
-            ) : (
-              <Circle className="h-5 w-5 text-muted-foreground hover:text-primary transition-smooth" />
-            )}
-          </Button>
+          <Checkbox
+            checked={task.completed}
+            onCheckedChange={() => onToggleComplete(task.id)}
+            className="h-5 w-5 data-[state=checked]:bg-success data-[state=checked]:border-success"
+          />
           
           <div className="flex-1 space-y-2">
             <h3 className={cn(
-              "font-medium text-foreground",
-              task.completed && "line-through text-muted-foreground"
+              "task-text text-foreground",
+              task.completed && "line-through text-muted-foreground/80"
             )}>
               {task.title}
             </h3>

@@ -110,13 +110,33 @@ export const AchievementsWidget = () => {
       </CardHeader>
       
       <CardContent className="space-y-4">
-        {/* Progress Overview */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Achievement Progress</span>
-            <span className="font-medium">{completionRate.toFixed(0)}%</span>
+        {/* Circular Progress Overview */}
+        <div className="flex items-center justify-center space-x-4 py-4">
+          <div className="relative w-20 h-20">
+            <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 36 36">
+              <path
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="hsl(var(--muted))"
+                strokeWidth="2"
+              />
+              <path
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="hsl(var(--primary))"
+                strokeWidth="2"
+                strokeDasharray={`${completionRate}, 100`}
+                strokeLinecap="round"
+              />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-lg font-bold text-primary">{completionRate.toFixed(0)}%</span>
+            </div>
           </div>
-          <Progress value={completionRate} className="h-2" />
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground">Achievement</p>
+            <p className="text-sm text-muted-foreground">Progress</p>
+          </div>
         </div>
 
         {/* Recent Achievements */}

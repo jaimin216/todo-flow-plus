@@ -108,38 +108,19 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
           ))}
         </div>
 
-        {/* Main Content Grid */}
+        {/* Main Content Grid - Today's Tasks Center-Left, Widgets Right */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Today's Tasks - Takes up 2 columns */}
+          {/* Center-Left Column - Today's Tasks */}
           <motion.div
             className="lg:col-span-2"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="h-fit">
-              <div className="p-6 border-b border-border">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold flex items-center">
-                    <Calendar className="h-5 w-5 mr-2 text-primary" />
-                    Today's Tasks
-                  </h2>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => onViewChange?.('today')}
-                  >
-                    View All
-                  </Button>
-                </div>
-              </div>
-              <div className="p-0">
-                <TaskView view="today" compact={true} />
-              </div>
-            </Card>
+            <TaskView view="today" compact={false} />
           </motion.div>
 
-          {/* Right Column Widgets */}
+          {/* Right Column - Widgets */}
           <motion.div
             className="space-y-6"
             initial={{ opacity: 0, x: 20 }}
@@ -147,72 +128,71 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
             transition={{ delay: 0.4 }}
           >
             <WeatherWidget />
-            <div className="grid grid-cols-1 gap-4">
-              <AchievementsWidget />
-            </div>
+            <HabitWidget />
+            <FinanceWidget />
+            <FocusWidget />
+            <AchievementsWidget />
+            <NotesWidget />
           </motion.div>
         </div>
 
-        {/* Secondary Widgets Row */}
+        {/* Bottom Calendar Section */}
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+          className="w-full"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <FocusWidget />
-          <HabitWidget />
-          <FinanceWidget />
-        </motion.div>
-
-        {/* Bottom Row */}
-        <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-        >
-          <NotesWidget />
-          <Card className="p-6">
-            <div className="text-center py-8">
-              <Trophy className="h-12 w-12 mx-auto mb-4 text-primary opacity-50" />
-              <h3 className="text-lg font-semibold mb-2">Quick Actions</h3>
-              <div className="grid grid-cols-2 gap-4 mt-6">
-                <Button 
-                  variant="outline" 
-                  className="flex flex-col h-auto py-4"
-                  onClick={() => onViewChange?.('calculator')}
-                >
-                  <Target className="h-6 w-6 mb-2" />
-                  Calculator
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex flex-col h-auto py-4"
-                  onClick={() => onViewChange?.('weather')}
-                >
-                  <Cloud className="h-6 w-6 mb-2" />
-                  Weather
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex flex-col h-auto py-4"
-                  onClick={() => onViewChange?.('habits')}
-                >
-                  <Target className="h-6 w-6 mb-2" />
-                  Habits
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex flex-col h-auto py-4"
-                  onClick={() => onViewChange?.('focus')}
-                >
-                  <Brain className="h-6 w-6 mb-2" />
-                  Focus Timer
-                </Button>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <Card className="p-6">
+                <div className="text-center py-8">
+                  <Trophy className="h-12 w-12 mx-auto mb-4 text-primary opacity-50" />
+                  <h3 className="text-lg font-semibold mb-2 widget-heading">Quick Actions</h3>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                    <Button 
+                      variant="outline" 
+                      className="flex flex-col h-auto py-4 hover-lift"
+                      onClick={() => onViewChange?.('calculator')}
+                    >
+                      <Target className="h-6 w-6 mb-2 sidebar-icon-hover" />
+                      Calculator
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="flex flex-col h-auto py-4 hover-lift"
+                      onClick={() => onViewChange?.('weather')}
+                    >
+                      <Cloud className="h-6 w-6 mb-2 sidebar-icon-hover" />
+                      Weather
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="flex flex-col h-auto py-4 hover-lift"
+                      onClick={() => onViewChange?.('habits')}
+                    >
+                      <Target className="h-6 w-6 mb-2 sidebar-icon-hover" />
+                      Habits
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="flex flex-col h-auto py-4 hover-lift"
+                      onClick={() => onViewChange?.('focus')}
+                    >
+                      <Brain className="h-6 w-6 mb-2 sidebar-icon-hover" />
+                      Focus Timer
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </div>
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="widget-heading mb-4">Calendar View Coming Soon</h3>
+                <Calendar className="h-16 w-16 mx-auto text-muted-foreground opacity-50" />
               </div>
             </div>
-          </Card>
+          </div>
         </motion.div>
       </motion.div>
     </div>

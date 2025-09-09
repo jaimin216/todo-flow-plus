@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface WeatherData {
   location: string;
@@ -78,6 +79,26 @@ const getWeatherIcon = (condition: string) => {
     case 'haze':
     default:
       return Cloud;
+  }
+};
+
+const getWeatherBackground = (condition: string) => {
+  switch (condition.toLowerCase()) {
+    case 'clear':
+    case 'sunny':
+      return 'weather-sunny';
+    case 'rain':
+    case 'drizzle':
+    case 'thunderstorm':
+      return 'weather-rainy';
+    case 'snow':
+      return 'weather-snowy';
+    case 'clouds':
+    case 'mist':
+    case 'fog':
+    case 'haze':
+    default:
+      return 'weather-cloudy';
   }
 };
 
@@ -300,9 +321,10 @@ export const WeatherWidget = () => {
   
   const WeatherIcon = getWeatherIcon(weather.condition);
   const weatherColor = getWeatherColor(weather.condition);
+  const weatherBg = getWeatherBackground(weather.condition);
 
   return (
-    <Card className="widget-card">
+    <Card className={cn("widget-card", weatherBg)}>
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center">
           <Cloud className="h-5 w-5 mr-2" />

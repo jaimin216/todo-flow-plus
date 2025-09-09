@@ -193,7 +193,7 @@ export const TaskView = ({ view, projectId, compact = false }: TaskViewProps) =>
             transition={{ duration: 0.3 }}
           >
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent task-heading">
                 {getViewTitle()}
               </h1>
               <p className="text-muted-foreground mt-1">
@@ -247,6 +247,11 @@ export const TaskView = ({ view, projectId, compact = false }: TaskViewProps) =>
               </AnimatePresence>
             </SortableContext>
           </DndContext>
+        )}
+
+        {/* Floating Add Task Button */}
+        {!compact && (
+          <QuickAdd onAddTask={handleAddTask} />
         )}
         
         {compact && filteredTasks.length > 4 && (

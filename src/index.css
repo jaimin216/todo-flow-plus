@@ -34,11 +34,11 @@ All colors MUST be HSL for consistency
     --accent: 210 25% 95%;
     --accent-foreground: 0 0% 11%;
     
-    /* Priority colors */
-    --priority-1: 0 84% 60%;     /* Red */
-    --priority-2: 25 95% 53%;    /* Orange */
-    --priority-3: 217 91% 60%;   /* Blue */
-    --priority-4: 215 13% 65%;   /* Gray */
+    /* Priority colors - Strong colors for clear hierarchy */
+    --priority-1: 0 91% 65%;     /* Strong Red - P1 */
+    --priority-2: 43 96% 56%;    /* Strong Yellow - P2 */
+    --priority-3: 142 76% 48%;   /* Strong Green - P3 */
+    --priority-4: 215 13% 65%;   /* Gray - P4 */
     
     /* Status colors */
     --success: 142 76% 36%;
@@ -339,6 +339,46 @@ All colors MUST be HSL for consistency
   
   .hover-glow {
     @apply transition-all duration-300 hover:shadow-glow;
+  }
+
+  /* Sidebar hover effects */
+  .sidebar-icon-hover {
+    @apply transition-all duration-200 hover:scale-110 hover:shadow-glow;
+  }
+
+  /* Font hierarchy */
+  .task-heading {
+    @apply text-base font-semibold leading-tight;
+  }
+  
+  .task-text {
+    @apply text-sm font-medium leading-relaxed;
+  }
+  
+  .widget-heading {
+    @apply text-lg font-bold leading-tight;
+  }
+
+  /* Weather condition backgrounds */
+  .weather-sunny {
+    @apply bg-gradient-to-br from-orange-100 to-yellow-100 dark:from-orange-900/20 dark:to-yellow-900/20;
+  }
+  
+  .weather-rainy {
+    @apply bg-gradient-to-br from-blue-100 to-gray-100 dark:from-blue-900/20 dark:to-gray-900/20;
+  }
+  
+  .weather-cloudy {
+    @apply bg-gradient-to-br from-gray-100 to-slate-100 dark:from-gray-900/20 dark:to-slate-900/20;
+  }
+  
+  .weather-snowy {
+    @apply bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/20 dark:to-gray-900/20;
+  }
+
+  /* Floating action button */
+  .floating-action-btn {
+    @apply fixed bottom-6 right-6 z-50 bg-primary text-primary-foreground rounded-full w-14 h-14 flex items-center justify-center shadow-elegant hover:shadow-glow transition-all duration-300 hover:scale-110;
   }
 
   /* Task completion celebration */
