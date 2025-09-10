@@ -23,6 +23,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Plus, Filter, SortAsc } from "lucide-react";
 
+export interface Subtask {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -31,6 +37,8 @@ export interface Task {
   dueDate?: string;
   project?: string;
   createdAt: string;
+  subtasks?: Subtask[];
+  notes?: string;
 }
 
 interface TaskViewProps {

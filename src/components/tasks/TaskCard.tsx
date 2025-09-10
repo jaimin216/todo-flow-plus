@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Calendar, Trash2, CheckCircle, Circle, GripVertical } from "lucide-react";
+import React, { useState } from "react";
+import { Calendar, Trash2, CheckCircle, Circle, GripVertical, ChevronDown, ChevronRight, FileText, Briefcase, User, Heart, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Task } from "./TaskView";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   useSortable,
 } from '@dnd-kit/sortable';
@@ -41,8 +41,16 @@ const priorityColors = {
   4: "bg-priority-4",
 };
 
+const projectIcons = {
+  work: Briefcase,
+  personal: User,
+  health: Heart,
+  learning: BookOpen
+};
+
 export const TaskCard = ({ task, onToggleComplete, onDelete, compact = false }: TaskCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   
   const {
     attributes,
@@ -129,9 +137,32 @@ export const TaskCard = ({ task, onToggleComplete, onDelete, compact = false }: 
               )}
               
               {task.project && (
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="secondary" className="text-xs flex items-center">
+                  {projectIcons[task.project as keyof typeof projectIcons] && (
+                    <>
+                      {React.createElement(projectIcons[task.project as keyof typeof projectIcons], {
+                        className: "h-3 w-3 mr-1"
+                      })}
+                    </>
+                  )}
                   {task.project}
                 </Badge>
+              )}
+              
+              {(task.subtasks?.length || task.notes) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 text-xs"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                >
+                  {isExpanded ? (
+                    <ChevronDown className="h-3 w-3 mr-1" />
+                  ) : (
+                    <ChevronRight className="h-3 w-3 mr-1" />
+                  )}
+                  Details
+                </Button>
               )}
             </div>
           </div>
@@ -148,6 +179,71 @@ export const TaskCard = ({ task, onToggleComplete, onDelete, compact = false }: 
           </Button>
         )}
       </div>
+      
+      {/* Expanded Details */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="border-t border-border/50 pt-3 mt-3 space-y-3"
+          >
+            {/* Subtasks */}
+            {task.subtasks && task.subtasks.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Subtasks ({task.subtasks.filter(st => st.completed).length}/{task.subtasks.length})
+                </h4>
+                <div className="space-y-1.5">
+                  {task.subtasks.map((subtask, index) => (
+                    <motion.div
+                      key={subtask.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="flex items-center space-x-2 p-2 rounded bg-muted/30"
+                    >
+                      <Checkbox
+                        checked={subtask.completed}
+                        className="h-4 w-4"
+                        disabled
+                      />
+                      <span className={cn(
+                        "text-sm flex-1",
+                        subtask.completed && "line-through text-muted-foreground/80"
+                      )}>
+                        {subtask.title}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Notes */}
+            {task.notes && (
+              <div className="space-y-2">
+                <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center">
+                  <FileText className="h-3 w-3 mr-1" />
+                  Notes
+                </h4>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="p-3 bg-muted/30 rounded-lg border border-border/50"
+                >
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {task.notes}
+                  </p>
+                </motion.div>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { TaskView } from "@/components/tasks/TaskView";
 import { WeatherWidget } from "@/components/widgets/WeatherWidget";
@@ -6,10 +7,16 @@ import { FinanceWidget } from "@/components/widgets/FinanceWidget";
 import { FocusWidget } from "@/components/widgets/FocusWidget";
 import { AchievementsWidget } from "@/components/widgets/AchievementsWidget";
 import { NotesWidget } from "@/components/widgets/NotesWidget";
+import { TaskCompletionChart } from "@/components/analytics/TaskCompletionChart";
+import { WeeklyProductivityChart } from "@/components/analytics/WeeklyProductivityChart";
+import { FinanceMiniDashboard } from "@/components/analytics/FinanceMiniDashboard";
+import { FloatingActionMenu } from "@/components/ui/floating-action-menu";
+import { QuickAdd } from "@/components/tasks/QuickAdd";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Target, TrendingUp, Brain, Trophy, StickyNote, Cloud } from "lucide-react";
+import { Calendar, Target, TrendingUp, Brain, Trophy, StickyNote, Cloud, BarChart3, TrendingDown } from "lucide-react";
 import { ViewType } from "@/components/layout/AppLayout";
+import { useToast } from "@/hooks/use-toast";
 
 interface DashboardProps {
   onViewChange?: (view: ViewType) => void;
@@ -21,32 +28,65 @@ const statCards = [
     value: "73%",
     change: "+12%",
     icon: Target,
-    color: "text-success"
+    color: "text-success",
+    gradient: "from-success/20 to-success/5",
+    sparklineData: [65, 68, 70, 73],
+    trend: "up"
   },
   {
     title: "Completed Tasks",
     value: "8/12",
     change: "+3",
     icon: Calendar,
-    color: "text-primary"
+    color: "text-primary",
+    gradient: "from-primary/20 to-primary/5",
+    sparklineData: [5, 6, 7, 8],
+    trend: "up"
   },
   {
     title: "Focus Sessions",
     value: "3",
     change: "+1",
     icon: Brain,
-    color: "text-warning"
+    color: "text-warning",
+    gradient: "from-warning/20 to-warning/5",
+    sparklineData: [2, 2, 3, 3],
+    trend: "up"
   },
   {
     title: "Budget Health",
     value: "82%",
     change: "+5%",
     icon: TrendingUp,
-    color: "text-success"
+    color: "text-success",
+    gradient: "from-success/20 to-success/5",
+    sparklineData: [77, 79, 80, 82],
+    trend: "up"
   }
 ];
 
 export const Dashboard = ({ onViewChange }: DashboardProps) => {
+  const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const { toast } = useToast();
+
+  const handleAddTask = () => {
+    setShowQuickAdd(true);
+  };
+
+  const handleAddHabit = () => {
+    toast({
+      title: "Add Habit",
+      description: "Habit creation feature coming soon!",
+    });
+  };
+
+  const handleAddNote = () => {
+    toast({
+      title: "Add Note",
+      description: "Note creation feature coming soon!",
+    });
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <motion.div
@@ -77,7 +117,7 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
           </div>
         </div>
 
-        {/* Stats Grid */}
+        {/* Enhanced KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {statCards.map((stat, index) => (
             <motion.div
@@ -86,20 +126,50 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className="p-6 hover-lift cursor-pointer">
+              <Card className={`kpi-card bg-gradient-to-br ${stat.gradient} border-l-4 border-l-current ${stat.color}`}>
                 <CardContent className="p-0">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-muted-foreground mb-2">
                         {stat.title}
                       </p>
-                      <p className="text-2xl font-bold mt-2">{stat.value}</p>
-                      <p className={`text-sm mt-1 ${stat.color}`}>
-                        {stat.change} from yesterday
-                      </p>
+                      <motion.p 
+                        className="text-3xl font-bold"
+                        key={stat.value}
+                        initial={{ scale: 1.1 }}
+                        animate={{ scale: 1 }}
+                      >
+                        {stat.value}
+                      </motion.p>
+                      <div className="flex items-center mt-2">
+                        {stat.trend === 'up' ? (
+                          <TrendingUp className="h-3 w-3 mr-1 text-success" />
+                        ) : (
+                          <TrendingDown className="h-3 w-3 mr-1 text-destructive" />
+                        )}
+                        <p className={`text-sm ${stat.color}`}>
+                          {stat.change} from yesterday
+                        </p>
+                      </div>
                     </div>
-                    <div className={`p-3 rounded-lg bg-primary/10`}>
+                    <div className={`p-3 rounded-lg bg-card/50 backdrop-blur-sm`}>
                       <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                    </div>
+                  </div>
+                  
+                  {/* Mini Sparkline */}
+                  <div className="mt-4">
+                    <div className="flex items-end space-x-1 h-8">
+                      {stat.sparklineData.map((value, i) => (
+                        <motion.div
+                          key={i}
+                          className={`flex-1 rounded-sm ${stat.color.replace('text-', 'bg-')}/30`}
+                          style={{ height: `${(value / Math.max(...stat.sparklineData)) * 100}%` }}
+                          initial={{ height: 0 }}
+                          animate={{ height: `${(value / Math.max(...stat.sparklineData)) * 100}%` }}
+                          transition={{ delay: index * 0.1 + i * 0.1 }}
+                        />
+                      ))}
                     </div>
                   </div>
                 </CardContent>
@@ -136,64 +206,88 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
           </motion.div>
         </div>
 
-        {/* Bottom Calendar Section */}
+        {/* Analytics Section */}
         <motion.div
-          className="w-full"
+          className="w-full space-y-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <Card className="p-6">
-                <div className="text-center py-8">
-                  <Trophy className="h-12 w-12 mx-auto mb-4 text-primary opacity-50" />
-                  <h3 className="text-lg font-semibold mb-2 widget-heading">Quick Actions</h3>
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-                    <Button 
-                      variant="outline" 
-                      className="flex flex-col h-auto py-4 hover-lift"
-                      onClick={() => onViewChange?.('calculator')}
-                    >
-                      <Target className="h-6 w-6 mb-2 sidebar-icon-hover" />
-                      Calculator
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="flex flex-col h-auto py-4 hover-lift"
-                      onClick={() => onViewChange?.('weather')}
-                    >
-                      <Cloud className="h-6 w-6 mb-2 sidebar-icon-hover" />
-                      Weather
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="flex flex-col h-auto py-4 hover-lift"
-                      onClick={() => onViewChange?.('habits')}
-                    >
-                      <Target className="h-6 w-6 mb-2 sidebar-icon-hover" />
-                      Habits
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="flex flex-col h-auto py-4 hover-lift"
-                      onClick={() => onViewChange?.('focus')}
-                    >
-                      <Brain className="h-6 w-6 mb-2 sidebar-icon-hover" />
-                      Focus Timer
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            </div>
-            <div className="space-y-4">
-              <div className="text-center">
-                <h3 className="widget-heading mb-4">Calendar View Coming Soon</h3>
-                <Calendar className="h-16 w-16 mx-auto text-muted-foreground opacity-50" />
+          {/* Top Analytics Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <TaskCompletionChart />
+            <WeeklyProductivityChart />
+          </div>
+          
+          {/* Full Width Finance Dashboard */}
+          <FinanceMiniDashboard />
+          
+          {/* Quick Actions Card */}
+          <Card className="p-6">
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-4">
+                <BarChart3 className="h-8 w-8 mr-3 text-primary" />
+                <h3 className="text-2xl font-bold widget-heading">Quick Actions</h3>
+              </div>
+              <p className="text-muted-foreground mb-6">Streamline your workflow with these shortcuts</p>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <Button 
+                  variant="outline" 
+                  className="flex flex-col h-auto py-6 hover-lift group"
+                  onClick={() => onViewChange?.('calculator')}
+                >
+                  <Target className="h-8 w-8 mb-3 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                  <span className="font-medium">Calculator</span>
+                  <span className="text-xs text-muted-foreground mt-1">Quick math</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="flex flex-col h-auto py-6 hover-lift group"
+                  onClick={() => onViewChange?.('weather')}
+                >
+                  <Cloud className="h-8 w-8 mb-3 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                  <span className="font-medium">Weather</span>
+                  <span className="text-xs text-muted-foreground mt-1">Check forecast</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="flex flex-col h-auto py-6 hover-lift group"
+                  onClick={() => onViewChange?.('habits')}
+                >
+                  <Trophy className="h-8 w-8 mb-3 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                  <span className="font-medium">Habits</span>
+                  <span className="text-xs text-muted-foreground mt-1">Track daily</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="flex flex-col h-auto py-6 hover-lift group"
+                  onClick={() => onViewChange?.('focus')}
+                >
+                  <Brain className="h-8 w-8 mb-3 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                  <span className="font-medium">Focus Timer</span>
+                  <span className="text-xs text-muted-foreground mt-1">Deep work</span>
+                </Button>
               </div>
             </div>
-          </div>
+          </Card>
         </motion.div>
+        
+        {/* Floating Action Menu */}
+        <FloatingActionMenu
+          onAddTask={handleAddTask}
+          onAddHabit={handleAddHabit}
+          onAddNote={handleAddNote}
+        />
+        
+        {/* Quick Add Dialog */}
+        {showQuickAdd && (
+          <QuickAdd 
+            onAddTask={(task) => {
+              console.log('New task:', task);
+              setShowQuickAdd(false);
+            }}
+          />
+        )}
       </motion.div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { ProfileDropdown } from "@/components/ui/profile-dropdown";
 import { ViewType } from "./AppLayout";
 
 interface HeaderProps {
@@ -32,15 +33,17 @@ export const Header = ({ currentView }: HeaderProps) => {
         </div>
         
         <div className="flex items-center space-x-4">
-          {['inbox', 'today', 'upcoming', 'project'].includes(currentView) && (
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search tasks..."
-                className="pl-10 w-64 transition-smooth focus:shadow-glow"
-              />
-            </div>
-          )}
+          {/* Global Search Bar */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Search tasks, notes, expenses..."
+              className="pl-10 w-80 search-enhanced transition-smooth focus:shadow-glow"
+            />
+          </div>
+          
+          {/* Profile Dropdown */}
+          <ProfileDropdown />
         </div>
       </div>
     </header>
