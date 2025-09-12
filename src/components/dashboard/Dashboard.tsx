@@ -88,45 +88,65 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-4 lg:p-6 max-w-7xl mx-auto min-h-screen">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="space-y-6"
       >
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+        {/* Modern Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+          <div className="mb-4 lg:mb-0">
+            <motion.h1 
+              className="text-3xl lg:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+            >
               Dashboard
-            </h1>
-            <p className="text-muted-foreground mt-2">
+            </motion.h1>
+            <motion.p 
+              className="text-muted-foreground mt-1"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
               Welcome back! Here's your productivity overview.
-            </p>
+            </motion.p>
           </div>
-          <div className="text-right">
+          <motion.div 
+            className="text-left lg:text-right"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+          >
             <p className="text-sm text-muted-foreground">Today</p>
-            <p className="text-xl font-semibold">
+            <p className="text-lg font-semibold">
               {new Date().toLocaleDateString('en-US', { 
                 weekday: 'long', 
                 month: 'short', 
                 day: 'numeric' 
               })}
             </p>
-          </div>
+          </motion.div>
         </div>
 
         {/* Enhanced KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
           {statCards.map((stat, index) => (
             <motion.div
               key={stat.title}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: 0.5 + index * 0.1 }}
             >
-              <Card className={`kpi-card bg-gradient-to-br ${stat.gradient} border-l-4 border-l-current ${stat.color}`}>
+              <Card className={`kpi-card bg-gradient-to-br ${stat.gradient} border-l-4 border-l-current ${stat.color} hover-lift`}>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex-1">
@@ -152,7 +172,7 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
                         </p>
                       </div>
                     </div>
-                    <div className={`p-2 rounded-lg bg-card/50 backdrop-blur-sm`}>
+                    <div className="p-2 rounded-lg bg-card/50 backdrop-blur-sm">
                       <stat.icon className={`h-5 w-5 ${stat.color}`} />
                     </div>
                   </div>
@@ -166,7 +186,7 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
                         style={{ height: `${(value / Math.max(...stat.sparklineData)) * 100}%` }}
                         initial={{ height: 0 }}
                         animate={{ height: `${(value / Math.max(...stat.sparklineData)) * 100}%` }}
-                        transition={{ delay: index * 0.1 + i * 0.1 }}
+                        transition={{ delay: 0.5 + index * 0.1 + i * 0.05 }}
                       />
                     ))}
                   </div>
@@ -174,148 +194,86 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
               </Card>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        {/* CSS Grid Layout - Matching Reference Design */}
-        <div className="grid grid-cols-12 gap-4 min-h-[600px]">
-          {/* Left Large Area - Today's Tasks (spans full height, 5 columns) */}
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Today's Tasks - Main Focus */}
           <motion.div
-            className="col-span-12 lg:col-span-5 lg:row-span-3 h-full"
+            className="lg:col-span-7"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.7 }}
           >
             <TaskView view="today" compact={false} />
           </motion.div>
 
-          {/* Top Right Section */}
-          <div className="col-span-12 lg:col-span-7 grid grid-cols-7 gap-4">
-            {/* Top Right Large Area - Weather Widget (5 columns) */}
-            <motion.div
-              className="col-span-7 lg:col-span-5"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <WeatherWidget />
-            </motion.div>
+          {/* Right Sidebar - Essential Widgets */}
+          <motion.div
+            className="lg:col-span-5 space-y-6"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.8 }}
+          >
+            {/* Weather Widget */}
+            <WeatherWidget />
 
-            {/* Top Right Corner - Focus Widget (2 columns) */}
-            <motion.div
-              className="col-span-7 lg:col-span-2"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <FocusWidget />
-            </motion.div>
+            {/* Habits Widget */}
+            <HabitWidget />
 
-            {/* Middle Right 2x2 Grid */}
-            <motion.div
-              className="col-span-7 lg:col-span-2"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6 }}
-            >
-              <TaskCompletionChart />
-            </motion.div>
-
-            <motion.div
-              className="col-span-7 lg:col-span-3"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.7 }}
-            >
-              <HabitWidget />
-            </motion.div>
-
-            <motion.div
-              className="col-span-7 lg:col-span-2"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.8 }}
-            >
-              <WeeklyProductivityChart />
-            </motion.div>
-
-            <motion.div
-              className="col-span-7 lg:col-span-3"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.9 }}
-            >
-              <FinanceWidget />
-            </motion.div>
-
-            {/* Bottom Right Large Area - Finance Mini Dashboard */}
-            <motion.div
-              className="col-span-7 lg:col-span-2"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.0 }}
-            >
-              <FinanceMiniDashboard />
-            </motion.div>
-          </div>
+            {/* Task Completion Chart */}
+            <TaskCompletionChart />
+          </motion.div>
         </div>
 
-        {/* Secondary Widgets Row */}
+        {/* Bottom Section - Secondary Features */}
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1 }}
+          transition={{ delay: 0.9 }}
         >
-          <AchievementsWidget />
-          <NotesWidget />
-          <Calendar />
-        </motion.div>
+          {/* Finance Widget */}
+          <FinanceWidget />
 
-        {/* Quick Actions - Compact Row */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-        >
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center">
-                <BarChart3 className="h-5 w-5 mr-2 text-primary" />
-                <h3 className="text-base font-bold widget-heading">Quick Actions</h3>
-              </div>
+          {/* Quick Actions */}
+          <Card className="p-6">
+            <div className="flex items-center mb-4">
+              <BarChart3 className="h-5 w-5 mr-2 text-primary" />
+              <h3 className="text-lg font-bold widget-heading">Quick Actions</h3>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <Button 
                 variant="outline" 
-                className="flex flex-col h-auto py-3 hover-lift group"
+                className="flex flex-col h-auto py-4 hover-lift group"
                 onClick={() => onViewChange?.('calculator')}
               >
-                <Target className="h-5 w-5 mb-1 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-medium">Calculator</span>
+                <Target className="h-5 w-5 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                <span className="text-sm font-medium">Calculator</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="flex flex-col h-auto py-3 hover-lift group"
+                className="flex flex-col h-auto py-4 hover-lift group"
                 onClick={() => onViewChange?.('weather')}
               >
-                <Cloud className="h-5 w-5 mb-1 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-medium">Weather</span>
+                <Cloud className="h-5 w-5 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                <span className="text-sm font-medium">Weather</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="flex flex-col h-auto py-3 hover-lift group"
+                className="flex flex-col h-auto py-4 hover-lift group"
                 onClick={() => onViewChange?.('habits')}
               >
-                <Trophy className="h-5 w-5 mb-1 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-medium">Habits</span>
+                <Trophy className="h-5 w-5 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                <span className="text-sm font-medium">Habits</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="flex flex-col h-auto py-3 hover-lift group"
+                className="flex flex-col h-auto py-4 hover-lift group"
                 onClick={() => onViewChange?.('focus')}
               >
-                <Brain className="h-5 w-5 mb-1 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-medium">Focus Timer</span>
+                <Brain className="h-5 w-5 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                <span className="text-sm font-medium">Focus Timer</span>
               </Button>
             </div>
           </Card>
