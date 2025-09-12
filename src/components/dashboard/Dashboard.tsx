@@ -176,11 +176,11 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
           ))}
         </div>
 
-        {/* Optimized Unified Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          {/* Today's Tasks - Primary Focus */}
+        {/* CSS Grid Layout - Matching Reference Design */}
+        <div className="grid grid-cols-12 gap-4 min-h-[600px]">
+          {/* Left Large Area - Today's Tasks (spans full height, 5 columns) */}
           <motion.div
-            className="lg:col-span-6"
+            className="col-span-12 lg:col-span-5 lg:row-span-3 h-full"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
@@ -188,39 +188,84 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
             <TaskView view="today" compact={false} />
           </motion.div>
 
-          {/* Essential Widgets Column */}
-          <motion.div
-            className="lg:col-span-3 space-y-4"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <WeatherWidget />
-            <HabitWidget />
-            <FocusWidget />
-          </motion.div>
+          {/* Top Right Section */}
+          <div className="col-span-12 lg:col-span-7 grid grid-cols-7 gap-4">
+            {/* Top Right Large Area - Weather Widget (5 columns) */}
+            <motion.div
+              className="col-span-7 lg:col-span-5"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <WeatherWidget />
+            </motion.div>
 
-          {/* Analytics Column */}
-          <motion.div
-            className="lg:col-span-3 space-y-4"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <TaskCompletionChart />
-            <WeeklyProductivityChart />
-            <FinanceWidget />
-          </motion.div>
+            {/* Top Right Corner - Focus Widget (2 columns) */}
+            <motion.div
+              className="col-span-7 lg:col-span-2"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <FocusWidget />
+            </motion.div>
+
+            {/* Middle Right 2x2 Grid */}
+            <motion.div
+              className="col-span-7 lg:col-span-2"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              <TaskCompletionChart />
+            </motion.div>
+
+            <motion.div
+              className="col-span-7 lg:col-span-3"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.7 }}
+            >
+              <HabitWidget />
+            </motion.div>
+
+            <motion.div
+              className="col-span-7 lg:col-span-2"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              <WeeklyProductivityChart />
+            </motion.div>
+
+            <motion.div
+              className="col-span-7 lg:col-span-3"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.9 }}
+            >
+              <FinanceWidget />
+            </motion.div>
+
+            {/* Bottom Right Large Area - Finance Mini Dashboard */}
+            <motion.div
+              className="col-span-7 lg:col-span-2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1.0 }}
+            >
+              <FinanceMiniDashboard />
+            </motion.div>
+          </div>
         </div>
 
-        {/* Secondary Features Row */}
+        {/* Secondary Widgets Row */}
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-4 gap-4"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 1.1 }}
         >
-          <FinanceMiniDashboard />
           <AchievementsWidget />
           <NotesWidget />
           <Calendar />
