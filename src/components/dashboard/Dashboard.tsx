@@ -118,7 +118,7 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
         </div>
 
         {/* Enhanced KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {statCards.map((stat, index) => (
             <motion.div
               key={stat.title}
@@ -127,50 +127,48 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
               transition={{ delay: index * 0.1 }}
             >
               <Card className={`kpi-card bg-gradient-to-br ${stat.gradient} border-l-4 border-l-current ${stat.color}`}>
-                <CardContent className="p-0">
-                  <div className="flex items-center justify-between mb-4">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-muted-foreground mb-2">
+                      <p className="text-sm font-medium text-muted-foreground mb-1">
                         {stat.title}
                       </p>
                       <motion.p 
-                        className="text-3xl font-bold"
+                        className="text-2xl font-bold"
                         key={stat.value}
                         initial={{ scale: 1.1 }}
                         animate={{ scale: 1 }}
                       >
                         {stat.value}
                       </motion.p>
-                      <div className="flex items-center mt-2">
+                      <div className="flex items-center mt-1">
                         {stat.trend === 'up' ? (
                           <TrendingUp className="h-3 w-3 mr-1 text-success" />
                         ) : (
                           <TrendingDown className="h-3 w-3 mr-1 text-destructive" />
                         )}
-                        <p className={`text-sm ${stat.color}`}>
-                          {stat.change} from yesterday
+                        <p className={`text-xs ${stat.color}`}>
+                          {stat.change}
                         </p>
                       </div>
                     </div>
-                    <div className={`p-3 rounded-lg bg-card/50 backdrop-blur-sm`}>
-                      <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                    <div className={`p-2 rounded-lg bg-card/50 backdrop-blur-sm`}>
+                      <stat.icon className={`h-5 w-5 ${stat.color}`} />
                     </div>
                   </div>
                   
                   {/* Mini Sparkline */}
-                  <div className="mt-4">
-                    <div className="flex items-end space-x-1 h-8">
-                      {stat.sparklineData.map((value, i) => (
-                        <motion.div
-                          key={i}
-                          className={`flex-1 rounded-sm ${stat.color.replace('text-', 'bg-')}/30`}
-                          style={{ height: `${(value / Math.max(...stat.sparklineData)) * 100}%` }}
-                          initial={{ height: 0 }}
-                          animate={{ height: `${(value / Math.max(...stat.sparklineData)) * 100}%` }}
-                          transition={{ delay: index * 0.1 + i * 0.1 }}
-                        />
-                      ))}
-                    </div>
+                  <div className="flex items-end space-x-1 h-6">
+                    {stat.sparklineData.map((value, i) => (
+                      <motion.div
+                        key={i}
+                        className={`flex-1 rounded-sm ${stat.color.replace('text-', 'bg-')}/30`}
+                        style={{ height: `${(value / Math.max(...stat.sparklineData)) * 100}%` }}
+                        initial={{ height: 0 }}
+                        animate={{ height: `${(value / Math.max(...stat.sparklineData)) * 100}%` }}
+                        transition={{ delay: index * 0.1 + i * 0.1 }}
+                      />
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -178,11 +176,11 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
           ))}
         </div>
 
-        {/* Optimized Grid Layout - Compact and Efficient */}
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
-          {/* Left Column - Today's Tasks (2 columns on XL screens) */}
+        {/* Optimized Unified Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          {/* Today's Tasks - Primary Focus */}
           <motion.div
-            className="xl:col-span-2"
+            className="lg:col-span-6"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
@@ -190,89 +188,89 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
             <TaskView view="today" compact={false} />
           </motion.div>
 
-          {/* Right Column - Essential Widgets & Analytics */}
+          {/* Essential Widgets Column */}
           <motion.div
-            className="xl:col-span-2 space-y-4"
+            className="lg:col-span-3 space-y-4"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
           >
-            {/* Top Row - Key Widgets */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <WeatherWidget />
-              <HabitWidget />
-            </div>
-            
-            {/* Middle Row - Analytics */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <TaskCompletionChart />
-              <WeeklyProductivityChart />
-            </div>
-            
-            {/* Bottom Row - Secondary Widgets */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <FinanceWidget />
-              <FocusWidget />
-            </div>
+            <WeatherWidget />
+            <HabitWidget />
+            <FocusWidget />
+          </motion.div>
+
+          {/* Analytics Column */}
+          <motion.div
+            className="lg:col-span-3 space-y-4"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <TaskCompletionChart />
+            <WeeklyProductivityChart />
+            <FinanceWidget />
           </motion.div>
         </div>
 
-        {/* Full Width Finance Dashboard & Additional Features */}
+        {/* Secondary Features Row */}
         <motion.div
-          className="space-y-4"
+          className="grid grid-cols-1 lg:grid-cols-4 gap-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
           <FinanceMiniDashboard />
-          
-          {/* Bottom Row - Secondary Widgets & Calendar */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <AchievementsWidget />
-            <NotesWidget />
-            <Calendar />
-          </div>
-          
-          {/* Quick Actions - Compact Design */}
+          <AchievementsWidget />
+          <NotesWidget />
+          <Calendar />
+        </motion.div>
+
+        {/* Quick Actions - Compact Row */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+        >
           <Card className="p-4">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <div className="flex items-center">
-                <BarChart3 className="h-6 w-6 mr-2 text-primary" />
-                <h3 className="text-lg font-bold widget-heading">Quick Actions</h3>
+                <BarChart3 className="h-5 w-5 mr-2 text-primary" />
+                <h3 className="text-base font-bold widget-heading">Quick Actions</h3>
               </div>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               <Button 
                 variant="outline" 
-                className="flex flex-col h-auto py-4 hover-lift group"
+                className="flex flex-col h-auto py-3 hover-lift group"
                 onClick={() => onViewChange?.('calculator')}
               >
-                <Target className="h-6 w-6 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium">Calculator</span>
+                <Target className="h-5 w-5 mb-1 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                <span className="text-xs font-medium">Calculator</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="flex flex-col h-auto py-4 hover-lift group"
+                className="flex flex-col h-auto py-3 hover-lift group"
                 onClick={() => onViewChange?.('weather')}
               >
-                <Cloud className="h-6 w-6 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium">Weather</span>
+                <Cloud className="h-5 w-5 mb-1 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                <span className="text-xs font-medium">Weather</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="flex flex-col h-auto py-4 hover-lift group"
+                className="flex flex-col h-auto py-3 hover-lift group"
                 onClick={() => onViewChange?.('habits')}
               >
-                <Trophy className="h-6 w-6 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium">Habits</span>
+                <Trophy className="h-5 w-5 mb-1 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                <span className="text-xs font-medium">Habits</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="flex flex-col h-auto py-4 hover-lift group"
+                className="flex flex-col h-auto py-3 hover-lift group"
                 onClick={() => onViewChange?.('focus')}
               >
-                <Brain className="h-6 w-6 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium">Focus Timer</span>
+                <Brain className="h-5 w-5 mb-1 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                <span className="text-xs font-medium">Focus Timer</span>
               </Button>
             </div>
           </Card>
