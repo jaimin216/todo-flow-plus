@@ -93,7 +93,7 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="space-y-8"
+        className="space-y-6"
       >
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -178,11 +178,11 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
           ))}
         </div>
 
-        {/* Main Content Grid - Today's Tasks Center-Left, Widgets Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Center-Left Column - Today's Tasks */}
+        {/* Optimized Grid Layout - Compact and Efficient */}
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
+          {/* Left Column - Today's Tasks (2 columns on XL screens) */}
           <motion.div
-            className="lg:col-span-2"
+            className="xl:col-span-2"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
@@ -190,84 +190,90 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
             <TaskView view="today" compact={false} />
           </motion.div>
 
-          {/* Right Column - Widgets */}
+          {/* Right Column - Essential Widgets & Analytics */}
           <motion.div
-            className="space-y-6"
+            className="xl:col-span-2 space-y-4"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <WeatherWidget />
-            <HabitWidget />
-            <FinanceWidget />
-            <FocusWidget />
-            <AchievementsWidget />
-            <NotesWidget />
+            {/* Top Row - Key Widgets */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <WeatherWidget />
+              <HabitWidget />
+            </div>
+            
+            {/* Middle Row - Analytics */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <TaskCompletionChart />
+              <WeeklyProductivityChart />
+            </div>
+            
+            {/* Bottom Row - Secondary Widgets */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <FinanceWidget />
+              <FocusWidget />
+            </div>
           </motion.div>
         </div>
 
-        {/* Analytics Section */}
+        {/* Full Width Finance Dashboard & Additional Features */}
         <motion.div
-          className="w-full space-y-6"
+          className="space-y-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          {/* Top Analytics Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <TaskCompletionChart />
-            <WeeklyProductivityChart />
-          </div>
-          
-          {/* Full Width Finance Dashboard */}
           <FinanceMiniDashboard />
           
-          {/* Quick Actions Card */}
-          <Card className="p-6">
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-4">
-                <BarChart3 className="h-8 w-8 mr-3 text-primary" />
-                <h3 className="text-2xl font-bold widget-heading">Quick Actions</h3>
+          {/* Bottom Row - Secondary Widgets & Calendar */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <AchievementsWidget />
+            <NotesWidget />
+            <Calendar />
+          </div>
+          
+          {/* Quick Actions - Compact Design */}
+          <Card className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <BarChart3 className="h-6 w-6 mr-2 text-primary" />
+                <h3 className="text-lg font-bold widget-heading">Quick Actions</h3>
               </div>
-              <p className="text-muted-foreground mb-6">Streamline your workflow with these shortcuts</p>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <Button 
-                  variant="outline" 
-                  className="flex flex-col h-auto py-6 hover-lift group"
-                  onClick={() => onViewChange?.('calculator')}
-                >
-                  <Target className="h-8 w-8 mb-3 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                  <span className="font-medium">Calculator</span>
-                  <span className="text-xs text-muted-foreground mt-1">Quick math</span>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex flex-col h-auto py-6 hover-lift group"
-                  onClick={() => onViewChange?.('weather')}
-                >
-                  <Cloud className="h-8 w-8 mb-3 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                  <span className="font-medium">Weather</span>
-                  <span className="text-xs text-muted-foreground mt-1">Check forecast</span>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex flex-col h-auto py-6 hover-lift group"
-                  onClick={() => onViewChange?.('habits')}
-                >
-                  <Trophy className="h-8 w-8 mb-3 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                  <span className="font-medium">Habits</span>
-                  <span className="text-xs text-muted-foreground mt-1">Track daily</span>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex flex-col h-auto py-6 hover-lift group"
-                  onClick={() => onViewChange?.('focus')}
-                >
-                  <Brain className="h-8 w-8 mb-3 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                  <span className="font-medium">Focus Timer</span>
-                  <span className="text-xs text-muted-foreground mt-1">Deep work</span>
-                </Button>
-              </div>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <Button 
+                variant="outline" 
+                className="flex flex-col h-auto py-4 hover-lift group"
+                onClick={() => onViewChange?.('calculator')}
+              >
+                <Target className="h-6 w-6 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                <span className="text-sm font-medium">Calculator</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                className="flex flex-col h-auto py-4 hover-lift group"
+                onClick={() => onViewChange?.('weather')}
+              >
+                <Cloud className="h-6 w-6 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                <span className="text-sm font-medium">Weather</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                className="flex flex-col h-auto py-4 hover-lift group"
+                onClick={() => onViewChange?.('habits')}
+              >
+                <Trophy className="h-6 w-6 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                <span className="text-sm font-medium">Habits</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                className="flex flex-col h-auto py-4 hover-lift group"
+                onClick={() => onViewChange?.('focus')}
+              >
+                <Brain className="h-6 w-6 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
+                <span className="text-sm font-medium">Focus Timer</span>
+              </Button>
             </div>
           </Card>
         </motion.div>
