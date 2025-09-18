@@ -10,122 +10,128 @@ All colors MUST be HSL for consistency
 */
 
 @layer base {
-  /* Theme 1: Light Minimalist (Default) - Clean & Professional */
+  /* Theme 1: Light Professional (Default) - Executive & Clean */
   :root {
-    --theme-font: 'Roboto', -apple-system, sans-serif;
+    --theme-font: 'Inter', -apple-system, sans-serif;
     
-    /* Base colors */
+    /* Base colors - Refined for professionalism */
     --background: 0 0% 100%;
-    --foreground: 0 0% 11%;
+    --foreground: 216 12% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 11%;
+    --card-foreground: 216 12% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 11%;
+    --popover-foreground: 216 12% 8%;
     
-    /* Brand colors */
-    --primary: 0 0% 11%;
+    /* Brand colors - Sophisticated navy & gold */
+    --primary: 220 39% 11%;
     --primary-foreground: 0 0% 98%;
-    --primary-glow: 0 0% 25%;
+    --primary-glow: 220 25% 25%;
     
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 11%;
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 46%;
-    --accent: 210 25% 95%;
-    --accent-foreground: 0 0% 11%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 216 12% 8%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 216 12% 8%;
     
-    /* Priority colors - Strong colors for clear hierarchy */
-    --priority-1: 0 91% 65%;     /* Strong Red - P1 */
-    --priority-2: 43 96% 56%;    /* Strong Yellow - P2 */
-    --priority-3: 142 76% 48%;   /* Strong Green - P3 */
-    --priority-4: 215 13% 65%;   /* Gray - P4 */
+    /* Priority colors - Professional hierarchy */
+    --priority-1: 0 84% 60%;     /* Executive Red */
+    --priority-2: 25 95% 53%;    /* Professional Orange */
+    --priority-3: 142 71% 45%;   /* Business Green */
+    --priority-4: 215 16% 47%;   /* Corporate Gray */
     
-    /* Status colors */
-    --success: 142 76% 36%;
+    /* Status colors - Refined */
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: 25 95% 53%;
     --warning-foreground: 0 0% 11%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
     /* UI elements */
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 11%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 220 39% 11%;
     --radius: 0.5rem;
     
-    /* Gradients & Effects */
-    --gradient-primary: linear-gradient(135deg, hsl(0 0% 11%), hsl(0 0% 25%));
-    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 98%));
-    --shadow-elegant: 0 4px 20px -4px hsl(0 0% 0% / 0.1);
-    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow-glow: 0 0 40px hsl(0 0% 25% / 0.15);
+    /* Gradients & Effects - Executive polish */
+    --gradient-primary: linear-gradient(135deg, hsl(220 39% 11%), hsl(220 25% 25%));
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 14% 98%));
+    --shadow-elegant: 0 4px 20px -4px hsl(220 39% 11% / 0.08);
+    --shadow-card: 0 1px 3px 0 hsl(220 39% 11% / 0.1), 0 1px 2px -1px hsl(220 39% 11% / 0.06);
+    --shadow-glow: 0 0 40px hsl(220 25% 25% / 0.12);
     
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-spring: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     
     /* Sidebar */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 26%;
-    --sidebar-primary: 0 0% 11%;
+    --sidebar-background: 220 14% 98%;
+    --sidebar-foreground: 216 12% 8%;
+    --sidebar-primary: 220 39% 11%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 11%;
-    --sidebar-border: 0 0% 91%;
-    --sidebar-ring: 0 0% 11%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 216 12% 8%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 220 39% 11%;
   }
 
-  /* Theme 2: Dark Elegance - Professional & Eye-Comfortable */
+  /* Theme 2: Dark Executive - Premium & Eye-Comfortable */
   .dark {
     --theme-font: 'Inter', -apple-system, sans-serif;
     
-    /* Base colors - Better contrast as requested */
-    --background: 0 0% 7%;           /* #121212 for body */
+    /* Base colors - Executive dark theme */
+    --background: 222 47% 4%;           /* Deep navy */
     --foreground: 210 40% 98%;
-    --card: 225 9% 18%;              /* #1E1E2F for cards - lighter */
+    --card: 222 47% 7%;                 /* Slightly lighter navy */
     --card-foreground: 210 40% 98%;
-    --popover: 225 9% 18%;
+    --popover: 222 47% 7%;
     --popover-foreground: 210 40% 98%;
     
-    /* Brand colors - Electric blue accent */
-    --primary: 217 91% 60%;
-    --primary-foreground: 220 13% 7%;
-    --primary-glow: 225 100% 70%;
+    /* Brand colors - Platinum accent */
+    --primary: 210 100% 70%;
+    --primary-foreground: 222 47% 4%;
+    --primary-glow: 215 100% 75%;
     
-    --secondary: 220 10% 17%;
+    --secondary: 215 25% 12%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 220 10% 17%;
-    --muted-foreground: 220 8% 65%;
-    --accent: 220 10% 17%;
+    --muted: 215 25% 12%;
+    --muted-foreground: 217 32% 65%;
+    --accent: 215 25% 12%;
     --accent-foreground: 210 40% 98%;
     
+    /* Priority colors - Dark theme optimized */
+    --priority-1: 0 84% 65%;     /* Refined Red */
+    --priority-2: 25 95% 58%;    /* Refined Orange */
+    --priority-3: 142 71% 50%;   /* Refined Green */
+    --priority-4: 217 32% 65%;   /* Refined Gray */
+    
     /* Status colors */
-    --success: 142 76% 50%;
-    --warning: 38 92% 60%;
+    --success: 142 71% 50%;
+    --warning: 25 95% 58%;
     --destructive: 0 84% 65%;
     
     /* UI elements */
-    --border: 220 10% 17%;
-    --input: 220 10% 17%;
-    --ring: 217 91% 60%;
+    --border: 215 25% 12%;
+    --input: 215 25% 12%;
+    --ring: 210 100% 70%;
     
-    /* Gradients & Effects */
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(225 100% 70%));
-    --gradient-subtle: linear-gradient(180deg, hsl(220 13% 7%), hsl(220 10% 9%));
-    --shadow-elegant: 0 10px 30px -10px hsl(0 0% 0% / 0.5);
+    /* Gradients & Effects - Premium polish */
+    --gradient-primary: linear-gradient(135deg, hsl(210 100% 70%), hsl(215 100% 75%));
+    --gradient-subtle: linear-gradient(180deg, hsl(222 47% 4%), hsl(222 47% 7%));
+    --shadow-elegant: 0 10px 30px -10px hsl(0 0% 0% / 0.4);
     --shadow-card: 0 4px 15px -3px hsl(0 0% 0% / 0.2), 0 2px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-glow: 0 0 40px hsl(217 91% 60% / 0.3);
+    --shadow-glow: 0 0 40px hsl(210 100% 70% / 0.25);
     
     /* Sidebar */
-    --sidebar-background: 220 13% 7%;
+    --sidebar-background: 222 47% 4%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 220 13% 7%;
-    --sidebar-accent: 220 10% 17%;
+    --sidebar-primary: 210 100% 70%;
+    --sidebar-primary-foreground: 222 47% 4%;
+    --sidebar-accent: 215 25% 12%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 220 10% 17%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 215 25% 12%;
+    --sidebar-ring: 210 100% 70%;
   }
 
   /* Theme 3: Funky Creative - Vibrant & Playful */

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TaskView } from "@/components/tasks/TaskView";
+import { TaskView, Task } from "@/components/tasks/TaskView";
 import { WeatherWidget } from "@/components/widgets/WeatherWidget";
 import { HabitWidget } from "@/components/widgets/HabitWidget";
 import { FinanceWidget } from "@/components/widgets/FinanceWidget";
@@ -14,7 +14,8 @@ import { FloatingActionMenu } from "@/components/ui/floating-action-menu";
 import { QuickAdd } from "@/components/tasks/QuickAdd";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Target, TrendingUp, Brain, Trophy, StickyNote, Cloud, BarChart3, TrendingDown } from "lucide-react";
+import { Calendar, Target, TrendingUp, Brain, Trophy, StickyNote, Cloud, BarChart3, TrendingDown, Settings } from "lucide-react";
+import { ThemeSelector } from "@/components/ui/theme-selector";
 import { ViewType } from "@/components/layout/AppLayout";
 import { useToast } from "@/hooks/use-toast";
 
@@ -67,10 +68,33 @@ const statCards = [
 
 export const Dashboard = ({ onViewChange }: DashboardProps) => {
   const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [tasks, setTasks] = useState<Task[]>([
+    { id: '1', title: 'Complete project proposal', completed: false, priority: 1, createdAt: new Date().toISOString() },
+    { id: '2', title: 'Review team feedback', completed: true, priority: 2, createdAt: new Date().toISOString() },
+    { id: '3', title: 'Schedule client meeting', completed: false, priority: 2, createdAt: new Date().toISOString() },
+    { id: '4', title: 'Update documentation', completed: true, priority: 3, createdAt: new Date().toISOString() },
+    { id: '5', title: 'Code review session', completed: false, priority: 1, createdAt: new Date().toISOString() },
+  ]);
   const { toast } = useToast();
 
-  const handleAddTask = () => {
-    setShowQuickAdd(true);
+  const completedTasks = tasks.filter(t => t.completed).length;
+  const totalTasks = tasks.length;
+  const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+  const handleAddTask = (newTask: { title: string; priority: 1 | 2 | 3 | 4 }) => {
+    const task = {
+      id: Date.now().toString(),
+      title: newTask.title,
+      completed: false,
+      priority: newTask.priority,
+      createdAt: new Date().toISOString(),
+    };
+    setTasks(prev => [task, ...prev]);
+    setShowQuickAdd(false);
+    toast({
+      title: "Task added! 🎉",
+      description: `"${task.title}" has been added to your list.`,
+    });
   };
 
   return (
@@ -81,7 +105,7 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
         transition={{ duration: 0.6 }}
         className="space-y-8"
       >
-        {/* Header */}
+        {/* Enhanced Header with Theme Selector */}
         <div className="flex items-center justify-between">
           <div>
             <motion.h1 
@@ -112,9 +136,12 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
           >
+            <div className="w-40">
+              <ThemeSelector />
+            </div>
             <Button 
-              onClick={handleAddTask}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              onClick={() => setShowQuickAdd(true)}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-elegant"
             >
               <Calendar className="h-4 w-4 mr-2" />
               Add Task
@@ -143,8 +170,9 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
                     <h2 className="text-xl font-bold text-foreground">Today's Focus</h2>
                     <p className="text-muted-foreground text-sm">Your priority tasks</p>
                   </div>
-                  <div className="text-3xl font-bold text-primary">8/12</div>
-                </div>
+                    <div className="text-3xl font-bold text-primary">{completedTasks}/{totalTasks}</div>
+                    <p className="text-muted-foreground text-sm">Tasks completed today</p>
+                  </div>
                 <div className="h-[calc(100%-4rem)]">
                   <TaskView view="today" compact={true} />
                 </div>
@@ -173,7 +201,7 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
               <CardContent className="p-4 text-center">
                 <div className="mb-2">
                   <Target className="h-6 w-6 mx-auto text-success mb-2" />
-                  <div className="text-2xl font-bold text-success">73%</div>
+                  <div className="text-2xl font-bold text-success">{completionPercentage}%</div>
                   <p className="text-xs text-muted-foreground">Daily Progress</p>
                 </div>
               </CardContent>
@@ -272,10 +300,7 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
         {/* Quick Add Dialog */}
         {showQuickAdd && (
           <QuickAdd 
-            onAddTask={(task) => {
-              console.log('New task:', task);
-              setShowQuickAdd(false);
-            }}
+            onAddTask={handleAddTask}
           />
         )}
       </motion.div>

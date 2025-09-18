@@ -8,13 +8,14 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
-type Theme = 'light' | 'dark' | 'theme-minimalistic' | 'theme-funky';
+type Theme = 'light' | 'dark' | 'theme-funky' | 'theme-serene' | 'theme-business';
 
 const themes = [
-  { id: 'light', name: 'Light', preview: 'bg-white border' },
-  { id: 'dark', name: 'Dark', preview: 'bg-gray-900 border-gray-700' },
-  { id: 'theme-minimalistic', name: 'Minimal', preview: 'bg-gray-50 border-gray-200' },
-  { id: 'theme-funky', name: 'Funky', preview: 'bg-gradient-to-r from-purple-400 to-pink-400' },
+  { id: 'light', name: 'Professional', preview: 'bg-white border border-gray-200', desc: 'Clean & Executive' },
+  { id: 'dark', name: 'Executive Dark', preview: 'bg-slate-900 border border-slate-700', desc: 'Premium & Sophisticated' },
+  { id: 'theme-funky', name: 'Creative', preview: 'bg-gradient-to-r from-purple-400 to-pink-400', desc: 'Vibrant & Playful' },
+  { id: 'theme-serene', name: 'Calm', preview: 'bg-gradient-to-r from-teal-100 to-blue-100', desc: 'Peaceful & Friendly' },
+  { id: 'theme-business', name: 'Corporate', preview: 'bg-gradient-to-r from-yellow-600 to-yellow-400', desc: 'Premium & Luxurious' },
 ];
 
 export const ThemeSelector = () => {
@@ -22,7 +23,7 @@ export const ThemeSelector = () => {
 
   const applyTheme = (theme: Theme) => {
     // Remove existing theme classes
-    document.documentElement.classList.remove('dark', 'theme-minimalistic', 'theme-funky');
+    document.documentElement.classList.remove('dark', 'theme-funky', 'theme-serene', 'theme-business');
     
     // Apply new theme
     if (theme !== 'light') {
@@ -41,18 +42,21 @@ export const ThemeSelector = () => {
           Theme
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-48" align="start">
+      <DropdownMenuContent className="w-56" align="start">
         {themes.map((theme) => (
           <DropdownMenuItem
             key={theme.id}
             onClick={() => applyTheme(theme.id as Theme)}
-            className="flex items-center justify-between"
+            className="flex items-center justify-between p-3"
           >
             <div className="flex items-center">
-              <div className={`w-4 h-4 rounded-full mr-3 ${theme.preview}`} />
-              {theme.name}
+              <div className={`w-5 h-5 rounded-full mr-3 ${theme.preview}`} />
+              <div>
+                <div className="font-medium">{theme.name}</div>
+                <div className="text-xs text-muted-foreground">{theme.desc}</div>
+              </div>
             </div>
-            {currentTheme === theme.id && <Check className="h-4 w-4" />}
+            {currentTheme === theme.id && <Check className="h-4 w-4 text-primary" />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
