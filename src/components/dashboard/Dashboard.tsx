@@ -73,33 +73,19 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
     setShowQuickAdd(true);
   };
 
-  const handleAddHabit = () => {
-    toast({
-      title: "Add Habit",
-      description: "Habit creation feature coming soon!",
-    });
-  };
-
-  const handleAddNote = () => {
-    toast({
-      title: "Add Note",
-      description: "Note creation feature coming soon!",
-    });
-  };
-
   return (
-    <div className="p-4 lg:p-6 max-w-7xl mx-auto min-h-screen">
+    <div className="p-6 max-w-7xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="space-y-6"
+        transition={{ duration: 0.6 }}
+        className="space-y-8"
       >
-        {/* Modern Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
-          <div className="mb-4 lg:mb-0">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
             <motion.h1 
-              className="text-3xl lg:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent"
+              className="text-2xl font-bold text-foreground"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
@@ -107,184 +93,181 @@ export const Dashboard = ({ onViewChange }: DashboardProps) => {
               Dashboard
             </motion.h1>
             <motion.p 
-              className="text-muted-foreground mt-1"
+              className="text-muted-foreground text-sm mt-1"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
-              Welcome back! Here's your productivity overview.
+              {new Date().toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
             </motion.p>
           </div>
+          
           <motion.div 
-            className="text-left lg:text-right"
+            className="flex items-center gap-3"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <p className="text-sm text-muted-foreground">Today</p>
-            <p className="text-lg font-semibold">
-              {new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                month: 'short', 
-                day: 'numeric' 
-              })}
-            </p>
+            <Button 
+              onClick={handleAddTask}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              <Calendar className="h-4 w-4 mr-2" />
+              Add Task
+            </Button>
           </motion.div>
         </div>
 
-        {/* Enhanced KPI Cards */}
+        {/* Modern Grid Layout - Matching Reference */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+          className="grid grid-cols-12 gap-6 min-h-[600px]"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          {statCards.map((stat, index) => (
-            <motion.div
-              key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 + index * 0.1 }}
-            >
-              <Card className={`kpi-card bg-gradient-to-br ${stat.gradient} border-l-4 border-l-current ${stat.color} hover-lift`}>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-muted-foreground mb-1">
-                        {stat.title}
-                      </p>
-                      <motion.p 
-                        className="text-2xl font-bold"
-                        key={stat.value}
-                        initial={{ scale: 1.1 }}
-                        animate={{ scale: 1 }}
-                      >
-                        {stat.value}
-                      </motion.p>
-                      <div className="flex items-center mt-1">
-                        {stat.trend === 'up' ? (
-                          <TrendingUp className="h-3 w-3 mr-1 text-success" />
-                        ) : (
-                          <TrendingDown className="h-3 w-3 mr-1 text-destructive" />
-                        )}
-                        <p className={`text-xs ${stat.color}`}>
-                          {stat.change}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="p-2 rounded-lg bg-card/50 backdrop-blur-sm">
-                      <stat.icon className={`h-5 w-5 ${stat.color}`} />
-                    </div>
-                  </div>
-                  
-                  {/* Mini Sparkline */}
-                  <div className="flex items-end space-x-1 h-6">
-                    {stat.sparklineData.map((value, i) => (
-                      <motion.div
-                        key={i}
-                        className={`flex-1 rounded-sm ${stat.color.replace('text-', 'bg-')}/30`}
-                        style={{ height: `${(value / Math.max(...stat.sparklineData)) * 100}%` }}
-                        initial={{ height: 0 }}
-                        animate={{ height: `${(value / Math.max(...stat.sparklineData)) * 100}%` }}
-                        transition={{ delay: 0.5 + index * 0.1 + i * 0.05 }}
-                      />
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Today's Tasks - Main Focus */}
+          {/* Hero Card - Large Featured Tasks */}
           <motion.div
-            className="lg:col-span-7"
-            initial={{ opacity: 0, x: -20 }}
+            className="col-span-12 lg:col-span-8 row-span-2"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            <Card className="h-full bg-gradient-to-br from-primary/10 via-primary/5 to-background border-primary/20 overflow-hidden">
+              <CardContent className="p-6 h-full">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground">Today's Focus</h2>
+                    <p className="text-muted-foreground text-sm">Your priority tasks</p>
+                  </div>
+                  <div className="text-3xl font-bold text-primary">8/12</div>
+                </div>
+                <div className="h-[calc(100%-4rem)]">
+                  <TaskView view="today" compact={true} />
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Weather Widget - Top Right */}
+          <motion.div
+            className="col-span-12 lg:col-span-4"
+            initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.7 }}
           >
-            <TaskView view="today" compact={false} />
+            <WeatherWidget />
           </motion.div>
 
-          {/* Right Sidebar - Essential Widgets */}
+          {/* Progress Card */}
           <motion.div
-            className="lg:col-span-5 space-y-6"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+            className="col-span-6 lg:col-span-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
           >
-            {/* Weather Widget */}
-            <WeatherWidget />
-
-            {/* Habits Widget */}
-            <HabitWidget />
-
-            {/* Task Completion Chart */}
-            <TaskCompletionChart />
+            <Card className="h-full bg-gradient-to-br from-success/20 to-success/5 border-success/20">
+              <CardContent className="p-4 text-center">
+                <div className="mb-2">
+                  <Target className="h-6 w-6 mx-auto text-success mb-2" />
+                  <div className="text-2xl font-bold text-success">73%</div>
+                  <p className="text-xs text-muted-foreground">Daily Progress</p>
+                </div>
+              </CardContent>
+            </Card>
           </motion.div>
-        </div>
 
-        {/* Bottom Section - Secondary Features */}
-        <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-        >
-          {/* Finance Widget */}
-          <FinanceWidget />
+          {/* Habits Card */}
+          <motion.div
+            className="col-span-6 lg:col-span-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+          >
+            <Card className="h-full bg-gradient-to-br from-warning/20 to-warning/5 border-warning/20">
+              <CardContent className="p-4 text-center">
+                <div className="mb-2">
+                  <Trophy className="h-6 w-6 mx-auto text-warning mb-2" />
+                  <div className="text-2xl font-bold text-warning">5/7</div>
+                  <p className="text-xs text-muted-foreground">Habits Done</p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          {/* Quick Actions */}
-          <Card className="p-6">
-            <div className="flex items-center mb-4">
-              <BarChart3 className="h-5 w-5 mr-2 text-primary" />
-              <h3 className="text-lg font-bold widget-heading">Quick Actions</h3>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <Button 
-                variant="outline" 
-                className="flex flex-col h-auto py-4 hover-lift group"
-                onClick={() => onViewChange?.('calculator')}
-              >
-                <Target className="h-5 w-5 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium">Calculator</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="flex flex-col h-auto py-4 hover-lift group"
-                onClick={() => onViewChange?.('weather')}
-              >
-                <Cloud className="h-5 w-5 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium">Weather</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="flex flex-col h-auto py-4 hover-lift group"
-                onClick={() => onViewChange?.('habits')}
-              >
-                <Trophy className="h-5 w-5 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium">Habits</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="flex flex-col h-auto py-4 hover-lift group"
-                onClick={() => onViewChange?.('focus')}
-              >
-                <Brain className="h-5 w-5 mb-2 sidebar-icon-hover group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium">Focus Timer</span>
-              </Button>
-            </div>
-          </Card>
+          {/* Finance Overview */}
+          <motion.div
+            className="col-span-12 lg:col-span-6"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.0 }}
+          >
+            <Card className="h-full bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="font-semibold text-foreground">Budget Overview</h3>
+                    <p className="text-sm text-muted-foreground">This month</p>
+                  </div>
+                  <TrendingUp className="h-5 w-5 text-blue-500" />
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Spent</span>
+                    <span className="font-medium">$1,247.80</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Remaining</span>
+                    <span className="font-medium text-success">$752.20</span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: '62%' }}></div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Quick Tools - Compact */}
+          <motion.div
+            className="col-span-12 lg:col-span-6"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.1 }}
+          >
+            <Card className="h-full bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-purple-500/20">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-4">
+                  <StickyNote className="h-5 w-5 mr-2 text-purple-500" />
+                  <h3 className="font-semibold text-foreground">Quick Tools</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="flex flex-col py-3 hover:bg-accent/50"
+                    onClick={() => onViewChange?.('focus')}
+                  >
+                    <Brain className="h-4 w-4 mb-1" />
+                    <span className="text-xs">Focus</span>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="flex flex-col py-3 hover:bg-accent/50"
+                    onClick={() => onViewChange?.('calculator')}
+                  >
+                    <Target className="h-4 w-4 mb-1" />
+                    <span className="text-xs">Calculator</span>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </motion.div>
-        
-        {/* Floating Action Menu */}
-        <FloatingActionMenu
-          onAddTask={handleAddTask}
-          onAddHabit={handleAddHabit}
-          onAddNote={handleAddNote}
-        />
         
         {/* Quick Add Dialog */}
         {showQuickAdd && (
